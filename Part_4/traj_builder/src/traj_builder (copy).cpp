@@ -112,9 +112,7 @@ geometry_msgs::PoseStamped TrajBuilder::xyPsi2PoseStamped(double x, double y, do
 //here are the main traj-builder fncs:
 //for spin-in-place motion that would hit maximum angular velocity, construct
 // trapezoidal angular velocity profile
-void TrajBuilder::build_trapezoidal_spin_traj(geometry_msgs::PoseStamped start_pose,
-                                          geometry_msgs::PoseStamped end_pose,
-                                          std::vector<nav_msgs::Odometry> &vec_of_states) {
+void TrajBuilder::build_trapezoidal_spin_traj(geometry_msgs::PoseStamped start_pose, geometry_msgs::PoseStamped end_pose, std::vector<nav_msgs::Odometry> &vec_of_states) {
     double x_start = start_pose.pose.position.x;
     double y_start = start_pose.pose.position.y;
     double x_end = end_pose.pose.position.x;
@@ -146,7 +144,7 @@ void TrajBuilder::build_trapezoidal_spin_traj(geometry_msgs::PoseStamped start_p
         psi_des = psi_start + 0.5 * accel * t*t;
         des_state.pose.pose.orientation = convertPlanarPsi2Quaternion(psi_des);
         vec_of_states.push_back(des_state);
-	}
+    }
     //now cruise for distance cruise_distance at const omega
     omega_des = sgn(dpsi)*omega_max_;
     des_state.twist.twist.angular.z  = sgn(dpsi)*omega_max_;
@@ -175,9 +173,7 @@ void TrajBuilder::build_trapezoidal_spin_traj(geometry_msgs::PoseStamped start_p
 //upper-level function to construct a spin-in-place trajectory
 // this function decides if triangular or trapezoidal angular-velocity
 // profile is needed
-void TrajBuilder::build_spin_traj(geometry_msgs::PoseStamped start_pose,
-                              geometry_msgs::PoseStamped end_pose,
-                              std::vector<nav_msgs::Odometry> &vec_of_states) {
+void TrajBuilder::build_spin_traj(geometry_msgs::PoseStamped start_pose, geometry_msgs::PoseStamped end_pose, std::vector<nav_msgs::Odometry> &vec_of_states) {
     //decide if triangular or trapezoidal profile:
     double x_start = start_pose.pose.position.x;
     double y_start = start_pose.pose.position.y;
@@ -201,9 +197,7 @@ void TrajBuilder::build_spin_traj(geometry_msgs::PoseStamped start_pose,
 
 //fnc to build a pure straight-line motion trajectory
 //determines if a triangular or trapezoidal velocity profile is needed
-void TrajBuilder::build_travel_traj(geometry_msgs::PoseStamped start_pose,
-                                geometry_msgs::PoseStamped end_pose,
-                                std::vector<nav_msgs::Odometry> &vec_of_states) {
+void TrajBuilder::build_travel_traj(geometry_msgs::PoseStamped start_pose, geometry_msgs::PoseStamped end_pose, std::vector<nav_msgs::Odometry> &vec_of_states) {
     //decide if triangular or trapezoidal profile:
     double x_start = start_pose.pose.position.x;
     double y_start = start_pose.pose.position.y;
@@ -224,9 +218,7 @@ void TrajBuilder::build_travel_traj(geometry_msgs::PoseStamped start_pose,
 //given that straight-line, trapezoidal velocity profile trajectory is needed,
 // construct the sequence of states (positions and velocities) to achieve the
 // desired motion, subject to speed and acceleration constraints
-void TrajBuilder::build_trapezoidal_travel_traj(geometry_msgs::PoseStamped start_pose,
-                                            geometry_msgs::PoseStamped end_pose,
-                                            std::vector<nav_msgs::Odometry> &vec_of_states) {
+void TrajBuilder::build_trapezoidal_travel_traj(geometry_msgs::PoseStamped start_pose, geometry_msgs::PoseStamped end_pose, std::vector<nav_msgs::Odometry> &vec_of_states) {
     double x_start = start_pose.pose.position.x;
     double y_start = start_pose.pose.position.y;
     double x_end = end_pose.pose.position.x;
@@ -259,15 +251,15 @@ void TrajBuilder::build_trapezoidal_travel_traj(geometry_msgs::PoseStamped start
     for (int i = 0; i < npts_ramp; i++) {
         t += dt_;
         speed_des = accel_max_*t;
-        des_state.twist.twist.linear.x = speed_des; //update speed
+	    des_state.twist.twist.linear.x = speed_des; //update speed
         //update positions
-        x_des = x_start + 0.5 * accel_max_ * t * t * cos(psi_des);
-        y_des = y_start + 0.5 * accel_max_ * t * t * sin(psi_des);
+    	x_des = x_start + 0.5 * accel_max_ * t * t * cos(psi_des);
+	    y_des = y_start + 0.5 * accel_max_ * t * t * sin(psi_des);
         des_state.pose.pose.position.x = x_des;
         des_state.pose.pose.position.y = y_des;
         vec_of_states.push_back(des_state);
     }
-    //now cruise for distance cruise_distance at const speed
+        //now cruise for distance cruise_distance at const speed
     speed_des = speed_max_;
     des_state.twist.twist.linear.x = speed_des;
     double t_cruise = cruise_distance / speed_max_;
@@ -290,7 +282,7 @@ void TrajBuilder::build_trapezoidal_travel_traj(geometry_msgs::PoseStamped start
         des_state.pose.pose.position.x = x_des;
         des_state.pose.pose.position.y = y_des;
         vec_of_states.push_back(des_state);
-    }
+	}
     //make sure the last state is precisely where requested, and at rest:
     des_state.pose.pose = end_pose.pose;
     //but final orientation will follow from point-and-go direction
@@ -301,9 +293,7 @@ void TrajBuilder::build_trapezoidal_travel_traj(geometry_msgs::PoseStamped start
 
 // constructs straight-line trajectory with triangular velocity profile,
 // respective limits of velocity and accel
-void TrajBuilder::build_triangular_travel_traj(geometry_msgs::PoseStamped start_pose,
-                                           geometry_msgs::PoseStamped end_pose,
-                                           std::vector<nav_msgs::Odometry> &vec_of_states) {
+void TrajBuilder::build_triangular_travel_traj(geometry_msgs::PoseStamped start_pose, geometry_msgs::PoseStamped end_pose, std::vector<nav_msgs::Odometry> &vec_of_states) {
     double x_start = start_pose.pose.position.x;
     double y_start = start_pose.pose.position.y;
     double x_end = end_pose.pose.position.x;
@@ -320,6 +310,7 @@ void TrajBuilder::build_triangular_travel_traj(geometry_msgs::PoseStamped start_
     int npts_ramp = round(t_ramp / dt_);
     double v_peak = accel_max_*t_ramp; // could consider special cases for reverse motion
     double d_vel = alpha_max_*dt_; // incremental velocity changes for ramp-up
+
     double x_des = x_start; //start from here
     double y_des = y_start;
     double speed_des = 0.0;
@@ -357,9 +348,7 @@ void TrajBuilder::build_triangular_travel_traj(geometry_msgs::PoseStamped start_
     vec_of_states.push_back(des_state);
 }
 
-void TrajBuilder::build_triangular_spin_traj(geometry_msgs::PoseStamped start_pose,
-                                         geometry_msgs::PoseStamped end_pose,
-                                         std::vector<nav_msgs::Odometry> &vec_of_states) {
+void TrajBuilder::build_triangular_spin_traj(geometry_msgs::PoseStamped start_pose, geometry_msgs::PoseStamped end_pose, std::vector<nav_msgs::Odometry> &vec_of_states) {
     nav_msgs::Odometry des_state;
     des_state.header = start_pose.header; //really, want to copy the frame_id
     des_state.pose.pose = start_pose.pose; //start from here
@@ -402,24 +391,24 @@ void TrajBuilder::build_triangular_spin_traj(geometry_msgs::PoseStamped start_po
 
 //this function would be useful for planning a need for sudden braking
 //compute trajectory corresponding to applying max prudent decel to halt
-void TrajBuilder::build_braking_traj(geometry_msgs::PoseStamped start_pose,
-                                 std::vector<nav_msgs::Odometry> &vec_of_states) {
-    ROS_INFO("Building braking Trajectory");
+void TrajBuilder::build_braking_traj(geometry_msgs::PoseStamped start_pose, std::vector<nav_msgs::Odometry> &vec_of_states) {
+    ROS_INFO("Building the braking trajectory");
     double x_start = start_pose.pose.position.x;
     double y_start = start_pose.pose.position.y;
     double speed_des = vec_of_states.back().twist.twist.linear.x;
+
     nav_msgs::Odometry des_state;
-    des_state.header = start_pose.header; 
+    des_state.header = start_pose.header; //really, want to copy the frame_id
     des_state.pose.pose = start_pose.pose; 
     des_state.twist.twist = halt_twist_;
-    des_state.twist.twist.linear.x = speed_des; //move at previous speed here
+    des_state.twist.twist.linear.x = speed_des; //moving at the last velocity here
+
     double tDecel = speed_des / accel_max_;
     int npts_brake = round(tDecel / dt_);
-    double x_des = x_start; 
+    double x_des = x_start;
     double y_des = y_start;
 
-	//code to slow down the robot (from max speed)
-    vec_of_states.clear();
+    vec_of_states.clear(); //start slowing down from max speed
     vec_of_states.push_back(des_state);
     for (int i = 0; i < npts_brake; i++) {
         speed_des -= accel_max_*dt_; //Euler one-step integration
@@ -436,9 +425,7 @@ void TrajBuilder::build_braking_traj(geometry_msgs::PoseStamped start_pose,
 // point to goal coords, then a straight-line trajectory from start to goal
 //NOTE:  this function will clear out the vec_of_states vector of trajectory states.
 // It does NOT append new planned states.  User beware.
-void TrajBuilder::build_point_and_go_traj(geometry_msgs::PoseStamped start_pose,
-                                      geometry_msgs::PoseStamped end_pose,
-                                      std::vector<nav_msgs::Odometry> &vec_of_states) {
+void TrajBuilder::build_point_and_go_traj(geometry_msgs::PoseStamped start_pose, geometry_msgs::PoseStamped end_pose, std::vector<nav_msgs::Odometry> &vec_of_states) {
     ROS_INFO("building point-and-go trajectory");
     nav_msgs::Odometry bridge_state;
     geometry_msgs::PoseStamped bridge_pose; //bridge end of prev traj to start of new traj
